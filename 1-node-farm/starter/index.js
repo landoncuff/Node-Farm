@@ -1,5 +1,11 @@
 // Connecting a module  
 const fs = require('fs'); // fs = file system
+const http = require('http'); // http module 
+
+
+
+////////////////////////////////
+// FILES
 
 // Reading a file (blocking)
 const textIn = fs.readFileSync('starter/txt/input.txt', 'utf-8');
@@ -25,4 +31,13 @@ fs.readFile('starter/txt/start.txt', 'utf-8', (err, data1) => {
 });
 
 
-// Testing
+////////////////////////////////////////////////////////////////////////
+// SERVER 
+
+const server = http.createServer((req, res) => {
+    res.end("This is a response back from the server");
+});
+
+server.listen(8000, '127.0.0.1', () => {
+
+});
