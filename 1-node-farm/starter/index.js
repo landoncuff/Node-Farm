@@ -1,6 +1,7 @@
 // Connecting a module  
 const fs = require('fs'); // fs = file system
 const http = require('http'); // http module 
+const url = require('url'); // url module 
 
 
 
@@ -32,12 +33,26 @@ fs.readFile('starter/txt/start.txt', 'utf-8', (err, data1) => {
 
 
 ////////////////////////////////////////////////////////////////////////
-// SERVER 
+// SERVER & Routing
 
 const server = http.createServer((req, res) => {
-    res.end("This is a response back from the server");
+
+    const pathName = req.url; // Getting the path (always starts with '/')
+
+    if(pathName === '/' || pathName === '/overview'){
+        res.end('This is the overview');
+    }else if(pathName === '/product'){
+        res.end('This is the product');
+    }else{
+        // Add a HTTP status code
+        res.writeHead(404, { 
+            'Content-type': 'text/html', // Server is now looking for HTML,
+            'my-own-header': 'hello-world'
+        });
+        res.end('<h1>This page not found</h1>'); // Turning response into HTML because that is what the server is looking for
+    }
 });
 
 server.listen(8000, '127.0.0.1', () => {
-
+    console.log('Listening to requests on port 8000');
 });
