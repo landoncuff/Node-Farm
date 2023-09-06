@@ -35,6 +35,11 @@ fs.readFile('starter/txt/start.txt', 'utf-8', (err, data1) => {
 ////////////////////////////////////////////////////////////////////////
 // SERVER & Routing
 
+// Broken out to make it a top-level code so it doesnt get executed each time there is a request
+// Making the method sync
+const data = fs.readFileSync(`${__dirname}/dev-data/data.json`, 'utf-8'); // Getting file path in project to get JSON data
+const dataObject = JSON.parse(data);
+
 const server = http.createServer((req, res) => {
 
     const pathName = req.url; // Getting the path (always starts with '/')
@@ -43,6 +48,9 @@ const server = http.createServer((req, res) => {
         res.end('This is the overview');
     }else if(pathName === '/product'){
         res.end('This is the product');
+    }else if (pathName === '/api'){
+        res.writeHead(200, { 'Content-type': 'application/json' }); // Making sure the browser knows to look for JSON
+        res.end(data); // Calling the data we get back from our top-level code
     }else{
         // Add a HTTP status code
         res.writeHead(404, { 
