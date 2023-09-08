@@ -62,24 +62,26 @@ const replaceTemplate = (temp, product) => {
 }
 
 const server = http.createServer((req, res) => {
+    // Getting the path (always starts with '/')
+    const { query, pathname } = url.parse(req.url, true); // using ES6 to pull out both object keys
 
-    const pathName = req.url; // Getting the path (always starts with '/')
     // Overview page
-    if(pathName === '/' || pathName === '/overview'){
+    if(pathname === '/' || pathname === '/overview'){
         // Read the template overview. We are also reading it to memory
-        res.writeHead(200, { 
-            'Content-type': 'text/html', // Server is now looking for HTML,
-            'my-own-header': 'hello-world'
-        });
-        /* looping through the data to return the array of values & then turn it into a string */
+        res.writeHead(200, { 'Content-type': 'text/html' }); // Server is now looking for HTML,
+
+        // looping through the data to return the array of values & then turn it into a string
         const cardsHTML = dataObject.map(el => replaceTemplate(tempCard, el)).join('');
         const output = tempOverview.replace(/{%PRODUCT_CARD%}/g, cardsHTML);
-        // console.log(cardsHTML);
-
         res.end(output);
-    }else if(pathName === '/product'){ // Product page
-        res.end('This is the product');
-    }else if (pathName === '/api'){ // API page
+    }else if(pathname === '/product'){ // Product page
+        // Pulling the product by the query string
+        const product = dataObject[query.id];
+        res.writeHead(200, { 'Content-type': 'text/html' }); // Server is now looking for HTML
+        const output = replaceTemplate(tempProduct, product);
+        res.end(output);
+
+    }else if (pathname === '/api'){ // API page
         res.writeHead(200, { 'Content-type': 'application/json' }); // Making sure the browser knows to look for JSON
         res.end(data); // Calling the data we get back from our top-level code
     }else{ // Not found page
