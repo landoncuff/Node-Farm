@@ -39,19 +39,50 @@ fs.readFile('starter/txt/start.txt', 'utf-8', (err, data1) => {
 // Making the method sync
 const data = fs.readFileSync(`${__dirname}/dev-data/data.json`, 'utf-8'); // Getting file path in project to get JSON data
 const dataObject = JSON.parse(data);
+// Reading each template and keeping it in memory so we are not calling each time page is loaded
+const tempOverview = fs.readFileSync(`${__dirname}/templates/template-overview.html`, 'utf-8');
+const tempCard = fs.readFileSync(`${__dirname}/templates/template-card.html`, 'utf-8');
+const tempProduct = fs.readFileSync(`${__dirname}/templates/template-product.html`, 'utf-8');
+
+const replaceTemplate = (temp, product) => {
+    // Uses regular expression to replace all the instances of the product name
+    let output = temp.replace(/{%PRODUCT_NAME%}/g, product.productName);
+    output = output.replace(/{%PRODUCT_IMAGE%}/g, product.image);
+    output = output.replace(/{%PRODUCT_QUANTITY%}/g, product.quantity);
+    output = output.replace(/{%PRODUCT_PRICE%}/g, product.price);
+    output = output.replace(/{%PRODUCT_ID%}/g, product.id);
+    output = output.replace(/{%PRODUCT_FROM%}/g, product.from);
+    output = output.replace(/{%PRODUCT_NUTRI%}/g, product.nutrients);
+    output = output.replace(/{%PRODUCT_DESCRIPTION%}/g, product.description);
+    if(!product.organic){
+        output = output.replace(/{%NOT_ORGANIC%}/g, 'not-organic');
+    }
+
+    return output;
+}
 
 const server = http.createServer((req, res) => {
 
     const pathName = req.url; // Getting the path (always starts with '/')
-
+    // Overview page
     if(pathName === '/' || pathName === '/overview'){
-        res.end('This is the overview');
-    }else if(pathName === '/product'){
+        // Read the template overview. We are also reading it to memory
+        res.writeHead(200, { 
+            'Content-type': 'text/html', // Server is now looking for HTML,
+            'my-own-header': 'hello-world'
+        });
+        /* looping through the data to return the array of values & then turn it into a string */
+        const cardsHTML = dataObject.map(el => replaceTemplate(tempCard, el)).join('');
+        const output = tempOverview.replace(/{%PRODUCT_CARD%}/g, cardsHTML);
+        // console.log(cardsHTML);
+
+        res.end(output);
+    }else if(pathName === '/product'){ // Product page
         res.end('This is the product');
-    }else if (pathName === '/api'){
+    }else if (pathName === '/api'){ // API page
         res.writeHead(200, { 'Content-type': 'application/json' }); // Making sure the browser knows to look for JSON
         res.end(data); // Calling the data we get back from our top-level code
-    }else{
+    }else{ // Not found page
         // Add a HTTP status code
         res.writeHead(404, { 
             'Content-type': 'text/html', // Server is now looking for HTML,
