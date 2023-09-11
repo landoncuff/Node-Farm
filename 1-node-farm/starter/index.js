@@ -1,9 +1,10 @@
-// Connecting a module  
+// Connecting a core module  
 const fs = require('fs'); // fs = file system
 const http = require('http'); // http module 
 const url = require('url'); // url module 
 
-
+// Adding own module
+const replaceTemplate = require('./modules/replaceTemplate');
 
 ////////////////////////////////
 // FILES
@@ -44,22 +45,7 @@ const tempOverview = fs.readFileSync(`${__dirname}/templates/template-overview.h
 const tempCard = fs.readFileSync(`${__dirname}/templates/template-card.html`, 'utf-8');
 const tempProduct = fs.readFileSync(`${__dirname}/templates/template-product.html`, 'utf-8');
 
-const replaceTemplate = (temp, product) => {
-    // Uses regular expression to replace all the instances of the product name
-    let output = temp.replace(/{%PRODUCT_NAME%}/g, product.productName);
-    output = output.replace(/{%PRODUCT_IMAGE%}/g, product.image);
-    output = output.replace(/{%PRODUCT_QUANTITY%}/g, product.quantity);
-    output = output.replace(/{%PRODUCT_PRICE%}/g, product.price);
-    output = output.replace(/{%PRODUCT_ID%}/g, product.id);
-    output = output.replace(/{%PRODUCT_FROM%}/g, product.from);
-    output = output.replace(/{%PRODUCT_NUTRI%}/g, product.nutrients);
-    output = output.replace(/{%PRODUCT_DESCRIPTION%}/g, product.description);
-    if(!product.organic){
-        output = output.replace(/{%NOT_ORGANIC%}/g, 'not-organic');
-    }
 
-    return output;
-}
 
 const server = http.createServer((req, res) => {
     // Getting the path (always starts with '/')
