@@ -3,36 +3,10 @@ const fs = require('fs'); // fs = file system
 const http = require('http'); // http module 
 const url = require('url'); // url module 
 
+const slugify = require('slugify');
+
 // Adding own module
 const replaceTemplate = require('./modules/replaceTemplate');
-
-////////////////////////////////
-// FILES
-
-// Reading a file (blocking)
-const textIn = fs.readFileSync('starter/txt/input.txt', 'utf-8');
-// console.log(textIn);
-
-// Writing to a file
-const textOut = `This is what we know about the avocado: ${textIn}\nCreated on ${Date.now()}`;
-fs.writeFileSync('starter/txt/output.txt', textOut);
-
-// console.log('File was written');
-
-// Reading file asynchronous (non-blocking)
-fs.readFile('starter/txt/start.txt', 'utf-8', (err, data1) => {
-    // The value coming from data1 is the name of the file 
-    fs.readFile(`starter/txt/${data1}.txt`, 'utf-8', (err, data2) => {
-        fs.readFile(`starter/txt/append.txt`, 'utf-8', (err, data3) => {
-            // Writing all the data to a File
-            fs.writeFile('starter/txt/final.txt', `${data2}\n${data3}` , 'utf-8', err => {
-                console.log('File has been written');
-            });
-        });
-    });
-});
-
-
 ////////////////////////////////////////////////////////////////////////
 // SERVER & Routing
 
@@ -45,7 +19,8 @@ const tempOverview = fs.readFileSync(`${__dirname}/templates/template-overview.h
 const tempCard = fs.readFileSync(`${__dirname}/templates/template-card.html`, 'utf-8');
 const tempProduct = fs.readFileSync(`${__dirname}/templates/template-product.html`, 'utf-8');
 
-
+// Creating an array of all the slugs
+const slugs = dataObject.map(el => slugify(el.productName, { lower: true }));
 
 const server = http.createServer((req, res) => {
     // Getting the path (always starts with '/')
