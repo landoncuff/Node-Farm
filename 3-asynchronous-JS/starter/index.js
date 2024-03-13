@@ -50,6 +50,8 @@ const writeFilePromise = (file, data) => {
   });
 };
 
+// Using Promises to read Promises
+/*
 readFilePromise(`${__dirname}/dog.txt`)
   .then((data) => {
     // returns a promise so we can chain
@@ -65,3 +67,25 @@ readFilePromise(`${__dirname}/dog.txt`)
   .catch((err) => {
     console.log(err);
   });
+*/
+
+// Using Async/Await
+const getDocPic = async () => {
+  try {
+    // Will wait for the resolve from the Promise
+    const data = await readFilePromise(`${__dirname}/dog.txt`);
+    console.log(`Breed ${data}`);
+
+    const res = await superagent.get(
+      `https://dog.ceo/api/breed/${data}/images/random`
+    );
+    console.log(res.body.message);
+
+    await writeFilePromise("dog-image-promise.txt", res.body.message);
+    console.log("dog image added");
+  } catch (err) {
+    console.log(err)  ;
+  }
+};
+
+getDocPic();
