@@ -84,8 +84,39 @@ const getDocPic = async () => {
     await writeFilePromise("dog-image-promise.txt", res.body.message);
     console.log("dog image added");
   } catch (err) {
-    console.log(err)  ;
+    console.log(err);
+    // Will add an error to the return value
+    throw err;
   }
+
+  return "2: READY";
 };
 
-getDocPic();
+// Using an IFFY instead
+(async () => {
+  try {
+    const data = await getDocPic();
+
+    console.log('1: getting dog pics');
+    console.log(data);
+    console.log('3: done getting dog pics');
+  } catch (err) {
+    console.log(`Error: ${err}`);
+  }
+})();
+
+/*
+console.log('1: getting dog pics');
+getDocPic().then(x => {
+  console.log(x);
+  console.log('3: done getting dog pics');
+}).catch(err => {
+  console.log(`Error: ${err}`);
+});
+*/
+
+/*
+  returns a Promise
+  const x = getDocPic();
+  console.log(x);
+*/
