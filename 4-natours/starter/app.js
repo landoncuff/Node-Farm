@@ -1,17 +1,48 @@
+const fs = require('fs');
 const express = require('express');
 
 // Will add a bunch of methods into the app variable
 const app = express();
 
-// Routing to get HTTP method
-app.get('/', (req, res) => {
-  res
-    .status(400)
-    .json({ message: 'Hello from the server side', app: 'Natour' });
+// We have to middle wear to make this work
+app.use(express.json());
+
+// Reading the data (only reading the data once instead of each time) - Putting into an object
+const tours = JSON.parse(
+  fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`)
+);
+
+// Building our API -- In POSTMAN we will send in URL "127.0.0.1:3000/api/v1/tours"
+app.get('/api/v1/tours', (req, res) => {
+  // Sending back all the tours
+  res.status(200).json({
+    status: 'success',
+    results: tours.length,
+    data: {
+      tours: tours,
+    },
+  });
 });
 
-app.post('/', (req, res) => {
-    res.send("You can post to this endpoint");
+app.post('/api/v1/tours', (req, res) => {
+  const newID = tours[tours.length - 1].id + 1;
+  // Object.assign will combine two objects into one
+  const newTour = Object.assign({ id: newID }, req.body);
+
+  tours.push(newTour);
+  // Writing the new tour to the file
+  fs.writeFile(
+    `${__dirname}/dev-data/data/tours-simple.json`,
+    JSON.stringify(tours),
+    (err) => {
+      res.status(201).json({
+        status: 'success',
+        data: {
+          tour: newTour,
+        },
+      });
+    }
+  );
 });
 
 const port = 3000;
@@ -19,5 +50,3 @@ const port = 3000;
 app.listen(port, () => {
   console.log('App Running on port ' + port);
 });
-
-// Rest API
