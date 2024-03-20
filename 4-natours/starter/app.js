@@ -29,18 +29,18 @@ app.get('/api/v1/tours/:id', (req, res) => {
   const id = req.params.id * 1; // will convert string into number
   const tour = tours.find((el) => el.id === id);
 
-  if(!tour){
+  if (!tour) {
     return res.status(404).json({
       status: 'fail',
-      message: 'Invalid ID'
+      message: 'Invalid ID',
     });
   }
 
   res.status(200).json({
     status: 'success',
     data: {
-      tour: tour
-    }
+      tour: tour,
+    },
   });
 });
 
@@ -63,6 +63,38 @@ app.post('/api/v1/tours', (req, res) => {
       });
     }
   );
+});
+
+// Updating the data
+app.patch('/api/v1/tours/:id', (req, res) => {
+  if (req.params.id * 1 > tours.length) {
+    return res.status(404).json({
+      status: 'fail',
+      message: 'Invalid ID',
+    });
+  }
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      tour: '<Updated tour here>',
+    },
+  });
+});
+
+// Delete data 
+app.delete('/api/v1/tours/:id', (req, res) => {
+  if (req.params.id * 1 > tours.length) {
+    return res.status(404).json({
+      status: 'fail',
+      message: 'Invalid ID',
+    });
+  }
+  
+  res.status(204).json({
+    status: 'success',
+    data: null,
+  });
 });
 
 const port = 3000;
