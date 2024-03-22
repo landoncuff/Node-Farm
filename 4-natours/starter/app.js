@@ -12,8 +12,8 @@ const tours = JSON.parse(
   fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`)
 );
 
-// Building our API -- In POSTMAN we will send in URL "127.0.0.1:3000/api/v1/tours"
-app.get('/api/v1/tours', (req, res) => {
+// All route functions
+const getAllTours = (req, res) => {
   // Sending back all the tours
   res.status(200).json({
     status: 'success',
@@ -22,10 +22,9 @@ app.get('/api/v1/tours', (req, res) => {
       tours: tours,
     },
   });
-});
+};
 
-// GET request with a variable (parameter)
-app.get('/api/v1/tours/:id', (req, res) => {
+const getTour = (req, res) => {
   const id = req.params.id * 1; // will convert string into number
   const tour = tours.find((el) => el.id === id);
 
@@ -42,9 +41,9 @@ app.get('/api/v1/tours/:id', (req, res) => {
       tour: tour,
     },
   });
-});
+};
 
-app.post('/api/v1/tours', (req, res) => {
+const createTour = (req, res) => {
   const newID = tours[tours.length - 1].id + 1;
   // Object.assign will combine two objects into one
   const newTour = Object.assign({ id: newID }, req.body);
@@ -63,10 +62,9 @@ app.post('/api/v1/tours', (req, res) => {
       });
     }
   );
-});
+};
 
-// Updating the data
-app.patch('/api/v1/tours/:id', (req, res) => {
+const updateTour = (req, res) => {
   if (req.params.id * 1 > tours.length) {
     return res.status(404).json({
       status: 'fail',
@@ -80,10 +78,9 @@ app.patch('/api/v1/tours/:id', (req, res) => {
       tour: '<Updated tour here>',
     },
   });
-});
+};
 
-// Updating the data
-app.put('/api/v1/tours/:id', (req, res) => {
+const deleteTour = (req, res) => {
   if (req.params.id * 1 > tours.length) {
     return res.status(404).json({
       status: 'fail',
@@ -91,28 +88,23 @@ app.put('/api/v1/tours/:id', (req, res) => {
     });
   }
 
-  res.status(200).json({
-    status: 'success',
-    data: {
-      tour: '<Updated tour here>',
-    },
-  });
-});
-
-// Delete data 
-app.delete('/api/v1/tours/:id', (req, res) => {
-  if (req.params.id * 1 > tours.length) {
-    return res.status(404).json({
-      status: 'fail',
-      message: 'Invalid ID',
-    });
-  }
-  
   res.status(204).json({
     status: 'success',
     data: null,
   });
-});
+};
+
+// Building our API -- In POSTMAN we will send in URL "127.0.0.1:3000/api/v1/tours"
+
+// Combining app.get('/api/v1/tours', getAllTours); app.post('/api/v1/tours', createTour);
+app.route('/api/v1/tours').get(getAllTours).post(createTour);
+
+app
+  .route('/api/v1/tours/:id')
+  .get(getTour)
+  .patch(updateTour)
+  .delete(deleteTour);
+  
 
 const port = 3000;
 // Will start up a server
