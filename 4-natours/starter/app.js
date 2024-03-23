@@ -1,8 +1,14 @@
 const fs = require('fs');
 const express = require('express');
+const morgan = require('morgan');
 
 // Will add a bunch of methods into the app variable
 const app = express();
+
+//! Middlewares
+
+// 3rd Party morgan
+app.use(morgan('dev'));
 
 // We have to middle wear to make this work
 app.use(express.json());
@@ -22,6 +28,8 @@ app.use((req, res, next) => {
 const tours = JSON.parse(
   fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`)
 );
+
+//! Route Handlers
 
 // All route functions
 const getAllTours = (req, res) => {
@@ -106,6 +114,8 @@ const deleteTour = (req, res) => {
   });
 };
 
+//! ROUTES
+
 // Building our API -- In POSTMAN we will send in URL "127.0.0.1:3000/api/v1/tours"
 
 // Combining app.get('/api/v1/tours', getAllTours); app.post('/api/v1/tours', createTour);
@@ -117,6 +127,7 @@ app
   .patch(updateTour)
   .delete(deleteTour);
 
+//! START SERVER
 const port = 3000;
 // Will start up a server
 app.listen(port, () => {
