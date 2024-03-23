@@ -7,6 +7,17 @@ const app = express();
 // We have to middle wear to make this work
 app.use(express.json());
 
+// Building our own middleware
+app.use((req, res, next) => {
+  console.log('Hello from the middleware');
+  next();
+});
+
+app.use((req, res, next) => {
+  req.requestTime = new Date().toISOString();
+  next();
+});
+
 // Reading the data (only reading the data once instead of each time) - Putting into an object
 const tours = JSON.parse(
   fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`)
@@ -18,6 +29,7 @@ const getAllTours = (req, res) => {
   res.status(200).json({
     status: 'success',
     results: tours.length,
+    requestTime: req.requestTime,
     data: {
       tours: tours,
     },
@@ -104,7 +116,6 @@ app
   .get(getTour)
   .patch(updateTour)
   .delete(deleteTour);
-  
 
 const port = 3000;
 // Will start up a server
