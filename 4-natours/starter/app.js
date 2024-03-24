@@ -158,20 +158,27 @@ const deleteUser = (req, res) => {
 
 // Building our API -- In POSTMAN we will send in URL "127.0.0.1:3000/api/v1/tours"
 // Combining app.get('/api/v1/tours', getAllTours); app.post('/api/v1/tours', createTour);
-app.route('/api/v1/tours').get(getAllTours).post(createTour);
-app
-  .route('/api/v1/tours/:id')
+
+// Creating multiple routers -- Mounting (Middleware)
+const tourRouter = express.Router();
+const userRouter = express.Router();
+
+tourRouter.route('/').get(getAllTours).post(createTour);
+tourRouter
+  .route('/:id')
   .get(getTour)
   .patch(updateTour)
   .delete(deleteTour);
 
-app.route('/api/v1/users').get(getAllUsers).post(createUser);
-app
-  .route('/api/v1/users/:id')
+userRouter.route('/').get(getAllUsers).post(createUser);
+userRouter
+  .route('/:id')
   .get(getUser)
   .patch(updateUser)
   .delete(deleteUser);
 
+app.use("/api/v1/tours", tourRouter);
+app.use("/api/v1/users", userRouter);
 //! START SERVER
 const port = 3000;
 // Will start up a server
