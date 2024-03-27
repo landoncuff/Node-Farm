@@ -10,7 +10,9 @@ const app = express();
 
 //! Middlewares
 // 3rd Party morgan
-app.use(morgan('dev'));
+if(process.env.NODE_ENV === 'development'){
+  app.use(morgan('dev'));
+}
 
 // We have to middle wear to make this work
 app.use(express.json());
