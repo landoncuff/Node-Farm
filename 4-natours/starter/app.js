@@ -37,3 +37,5 @@ app.use('/api/v1/users', userRouter);
 
 //! START SERVER
 module.exports = app;
+
+// Database work
