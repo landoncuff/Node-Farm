@@ -11,14 +11,14 @@ const DB = process.env.DATABASE.replace(
 
 mongoose
   .connect(DB, {
-  useNewUrlParser: true,
-  useCreateIndex: true,
+    useNewUrlParser: true,
+    useCreateIndex: true,
     useFindAndModify: false,
   })
   .then(() => {
     // Returns a Promise
-  console.log('DB Connection successful');
-});
+    console.log('DB Connection successful');
+  });
 
 // Creating a mongoose schema and model
 const tourSchema = new mongoose.Schema({
@@ -38,6 +38,24 @@ const tourSchema = new mongoose.Schema({
 });
 
 const Tour = new mongoose.model('Tour', tourSchema);
+
+// Creating a new document
+const testTour = new Tour({
+  name: 'The Forest Hiker',
+  rating: 4.7,
+  price: 497,
+});
+
+// Saving that new document (returns Promise)
+testTour
+  .save()
+  .then((document) => {
+    console.log(document);
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+
 const app = require('./app');
 
 const port = process.env.PORT || 3000;
