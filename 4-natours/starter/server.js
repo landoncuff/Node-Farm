@@ -20,42 +20,6 @@ mongoose
     console.log('DB Connection successful');
   });
 
-// Creating a mongoose schema and model
-const tourSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: [true, 'Tour must have a name'],
-    unique: true,
-  },
-  rating: {
-    type: Number,
-    default: 4.5,
-  },
-  price: {
-    type: Number,
-    required: [true, 'Tour must have a price'],
-  },
-});
-
-const Tour = new mongoose.model('Tour', tourSchema);
-
-// Creating a new document
-const testTour = new Tour({
-  name: 'The Forest Hiker',
-  rating: 4.7,
-  price: 497,
-});
-
-// Saving that new document (returns Promise)
-testTour
-  .save()
-  .then((document) => {
-    console.log(document);
-  })
-  .catch((err) => {
-    console.log(err);
-  });
-
 const app = require('./app');
 
 const port = process.env.PORT || 3000;
@@ -63,5 +27,3 @@ const port = process.env.PORT || 3000;
 app.listen(port, () => {
   // console.log('App Running on port ' + port);
 });
-
-// Studied slides

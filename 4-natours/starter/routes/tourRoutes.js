@@ -3,9 +3,6 @@ const tourController = require('./../controllers/tourController');
 // Destructuring -- const {createTour, etc} = require('./../controllers/tourController');
 const router = express.Router();
 
-// Param Middleware
-router.param('id', tourController.checkID);
-
 // Combining app.get('/api/v1/tours', getAllTours); app.post('/api/v1/tours', createTour);
 router
   .route('/')
