@@ -1,3 +1,4 @@
+const { Linter } = require('eslint');
 const Tour = require('./../models/tourModel'); // Getting our model
 
 //! ROUTES
@@ -6,15 +7,24 @@ exports.getAllTours = async (req, res) => {
   try {
     // BUILDING QUERY
     // 1) FILTERING
-    const queryObj = {...req.query}; // Making a shallow copy of queries
+    const queryObj = { ...req.query }; // Making a shallow copy of queries
     const excludeFields = ['page', 'sort', 'limit', 'fields'];
-    excludeFields.forEach(el => delete queryObj[el]);
+    excludeFields.forEach((el) => delete queryObj[el]);
 
     // 2) ADVANCED FILTERING
     let queryStr = JSON.stringify(queryObj); // Logic operators
-    queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, match => `$${match}`);
+    queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
 
-    const query = Tour.find(JSON.parse(queryStr));
+    let query = Tour.find(JSON.parse(queryStr)); // Returns a query
+
+    // 3) SORTING
+    if (req.query.sort) {
+      const sortBy = req.query.sort.split(',').join(' ');
+      query = query.sort(sortBy);
+    } else {
+      // Default sortby
+      query = query.sort('-createdAt');
+    }
 
     // EXECUTE QUERY
     const tours = await query;
