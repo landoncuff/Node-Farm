@@ -1,7 +1,6 @@
 // Getting Access to our database through mongoose
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
-const app = require('./app');
 
 // Getting our environment variables
 dotenv.config({ path: './config.env' });
@@ -21,6 +20,8 @@ mongoose
     // Returns a Promise
     console.log('DB Connection successful');
   });
+  
+const app = require('./app');
 
 const port = process.env.PORT || 3000;
 // Will start up a server
