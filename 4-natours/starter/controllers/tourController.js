@@ -23,7 +23,7 @@ exports.getAllTours = async (req, res) => {
       query = query.sort(sortBy);
     } else {
       // Default sortby
-      query = query.sort('-createdAt');
+      query = query.sort('-createdAt _id');
     }
 
     // 4) Limiting fields
@@ -33,6 +33,20 @@ exports.getAllTours = async (req, res) => {
     } else {
       // Excluding mongoose default values
       query = query.select('-__v');
+    }
+
+    // 5) Pagination
+    const page = req.query.page * 1 || 1; // turning string into number but default to 1
+    const limit = req.query.limit * 1 || 100; // turning string into number but default to 100
+    const skip = (page - 1) * limit;
+
+    query = query.skip(skip).limit(limit);
+
+    if (req.query.page) {
+      const numTours = await Tour.countDocuments();
+      if (skip >= numTours) {
+        throw new Error('This page does not exist');
+      }
     }
 
     // EXECUTE QUERY
@@ -125,6 +139,3 @@ exports.deleteTour = async (req, res) => {
     });
   }
 };
-
-
-
