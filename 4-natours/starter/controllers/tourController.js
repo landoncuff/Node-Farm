@@ -1,6 +1,6 @@
 const { Linter } = require('eslint');
 const Tour = require('./../models/tourModel'); // Getting our model
-const APIFeatures = require('./../utils/apiFeatures')
+const APIFeatures = require('./../utils/apiFeatures');
 
 //! ROUTES
 
