@@ -8,6 +8,9 @@ router
   .route('/top-5-cheap')
   .get(tourController.aliasTopTours, tourController.getAllTours);
 
+// Aggregation
+router.route('/tour-stats').get(tourController.getTourStats);
+
 // Combining app.get('/api/v1/tours', getAllTours); app.post('/api/v1/tours', createTour);
 router
   .route('/')
