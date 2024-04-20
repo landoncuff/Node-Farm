@@ -11,6 +11,9 @@ router
 // Aggregation
 router.route('/tour-stats').get(tourController.getTourStats);
 
+// Aggregation -- Get month plan (passing in a year)
+router.route('/monthly-plan/:year').get(tourController.getMonthlyPlan);
+
 // Combining app.get('/api/v1/tours', getAllTours); app.post('/api/v1/tours', createTour);
 router
   .route('/')
@@ -23,6 +26,3 @@ router
   .delete(tourController.deleteTour);
 
 module.exports = router;
-
-
-// Studied 
