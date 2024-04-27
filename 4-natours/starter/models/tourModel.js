@@ -75,3 +75,5 @@ tourSchema.virtual('durationWeeks').get(function () {
 const Tour = new mongoose.model('Tour', tourSchema);
 
 module.exports = Tour;
+
+// Video study
