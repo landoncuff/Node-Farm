@@ -1,5 +1,6 @@
 // Getting Access to our database through mongoose
 const mongoose = require('mongoose');
+const slugify = require('slugify');
 
 // Creating a mongoose schema and model
 const tourSchema = new mongoose.Schema(
@@ -11,6 +12,7 @@ const tourSchema = new mongoose.Schema(
       unique: true,
       trim: true,
     },
+    slug: String,
     duration: {
       type: Number,
       required: [true, 'A tour must have a duration'],
@@ -72,8 +74,19 @@ tourSchema.virtual('durationWeeks').get(function () {
   return this.duration / 7;
 });
 
+// Middleware that will run before an event (save -- in this case)
+// Runs before save, create methods but NOT insert many
+tourSchema.pre('save', function (next) {
+  this.slug = slugify(this.name, { lower: true });
+  next();
+});
+
+// Post middleware has access to the save document
+tourSchema.post('save', function (doc, next) {
+  console.log(doc);
+  next();
+});
+
 const Tour = new mongoose.model('Tour', tourSchema);
 
 module.exports = Tour;
-
-// Video study
