@@ -1,6 +1,7 @@
 // Getting Access to our database through mongoose
 const mongoose = require('mongoose');
 const slugify = require('slugify');
+const validator = require('validator');
 
 // Creating a mongoose schema and model
 const tourSchema = new mongoose.Schema(
@@ -19,6 +20,7 @@ const tourSchema = new mongoose.Schema(
         10,
         'Tour name is too short. Must have more than or equal to 10 characters',
       ],
+      // validate: [validator.isAlpha, 'Name must only contain letters']
     },
     slug: String,
     duration: {
@@ -51,7 +53,17 @@ const tourSchema = new mongoose.Schema(
       type: Number,
       required: [true, 'Tour must have a price'],
     },
-    priceDiscount: Number,
+    priceDiscount: {
+      type: Number,
+      validate: {
+        validator: function (val) {
+          // {this} only points to current docs on NEW document creation (does not work on update)
+          return val < this.price;
+        },
+        // We have access to the value
+        message: 'The discount ({VALUE}) can not be less than the price',
+      },
+    },
     summary: {
       type: String,
       trim: true, // Remove all white space
