@@ -58,6 +58,10 @@ const tourSchema = new mongoose.Schema(
       select: false,
     },
     startDates: [Date], // Array of dates
+    secretTour: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     // Object for properties
@@ -74,6 +78,7 @@ tourSchema.virtual('durationWeeks').get(function () {
   return this.duration / 7;
 });
 
+// DOCUMENT MIDDLEWARE
 // Middleware that will run before an event (save -- in this case)
 // Runs before save, create methods but NOT insert many
 tourSchema.pre('save', function (next) {
@@ -81,8 +86,18 @@ tourSchema.pre('save', function (next) {
   next();
 });
 
-// Post middleware has access to the save document
-tourSchema.post('save', function (doc, next) {
+// QUERY MIDDLEWARE
+// All find methods
+tourSchema.pre(/^find/, function (next) {
+  // Now a query object that we can use a find method on
+  this.find({ secretTour: { $ne: true } }); // Not equal to true
+  this.start = Date.now();
+  next();
+});
+
+// After the query is done
+tourSchema.post(/^find/, function (doc, next) {
+  console.log(`Query took ${Date.now() - this.start}`);
   console.log(doc);
   next();
 });
