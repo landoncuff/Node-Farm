@@ -20,7 +20,7 @@ mongoose
     // Returns a Promise
     console.log('DB Connection successful');
   });
-  
+
 const app = require('./app');
 
 const port = process.env.PORT || 3000;
