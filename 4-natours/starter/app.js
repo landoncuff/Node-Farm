@@ -32,14 +32,24 @@ app.use('/api/v1/users', userRouter);
 //! Middleware that will handle routes that do not exist
 // .all will handle all the urls that are not handled
 app.all('*', (req, res, next) => {
-  res.status(404).json({
-    status: 'Fail',
-    message: `Can't find ${req.originalUrl} on the server!`,
+  const err = new Error(`Can't find ${req.originalUrl} on the server!`);
+  err.statusCode = 404;
+  err.status = 'fail';
+  next(err); // Will move straight to the error middleware
+});
+
+// Error Middleware
+app.use((err, req, res, next) => {
+  err.statusCode = err.statusCode || 500;
+  err.status = err.status || 'error';
+
+  res.status(err.statusCode).json({
+    status: err.status,
+    message: err.message,
   });
+
   next();
 });
 
 //! START SERVER
 module.exports = app;
-
-// Study video
