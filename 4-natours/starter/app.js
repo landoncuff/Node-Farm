@@ -2,6 +2,8 @@ const express = require('express');
 const morgan = require('morgan');
 
 // Getting Route Handlers
+const AppError = require('./utils/appError');
+const globalErrorHandler = require('./controllers/errorController')
 const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
 
@@ -32,24 +34,12 @@ app.use('/api/v1/users', userRouter);
 //! Middleware that will handle routes that do not exist
 // .all will handle all the urls that are not handled
 app.all('*', (req, res, next) => {
-  const err = new Error(`Can't find ${req.originalUrl} on the server!`);
-  err.statusCode = 404;
-  err.status = 'fail';
-  next(err); // Will move straight to the error middleware
+  // Will move straight to the error middleware
+  next(new AppError(`Can't find ${req.originalUrl} on the server!`, 404));
 });
 
 // Error Middleware
-app.use((err, req, res, next) => {
-  err.statusCode = err.statusCode || 500;
-  err.status = err.status || 'error';
-
-  res.status(err.statusCode).json({
-    status: err.status,
-    message: err.message,
-  });
-
-  next();
-});
+app.use(globalErrorHandler);
 
 //! START SERVER
 module.exports = app;
