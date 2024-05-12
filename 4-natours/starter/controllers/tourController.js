@@ -1,5 +1,6 @@
 const { Linter } = require('eslint');
 const Tour = require('./../models/tourModel'); // Getting our model
+const AppError = require('./../utils/appError'); // Error Class
 const catchAsync = require('./../utils/catchAsync');
 const APIFeatures = require('./../utils/apiFeatures');
 
@@ -36,6 +37,12 @@ exports.getAllTours = catchAsync(async (req, res, next) => {
 exports.getTour = catchAsync(async (req, res, next) => {
   // Sort hand (helper function)
   const tour = await Tour.findById(req.params.id);
+
+  // Create error if no tour -- send to error middleware
+  if (!tour) {
+    return next(new AppError('No tour found with that ID', 404));
+  }
+
   // Tour.findOne({_id: req.params.id});
   res.status(200).json({
     status: 'success',
@@ -60,6 +67,12 @@ exports.updateTour = catchAsync(async (req, res, next) => {
     new: true,
     runValidators: true,
   });
+
+  // Create error if no tour -- send to error middleware
+  if (!tour) {
+    return next(new AppError('No tour found with that ID', 404));
+  }
+
   res.status(200).json({
     status: 'success',
     data: {
@@ -70,6 +83,12 @@ exports.updateTour = catchAsync(async (req, res, next) => {
 
 exports.deleteTour = catchAsync(async (req, res, next) => {
   const tour = await Tour.findByIdAndDelete(req.params.id);
+
+  // Create error if no tour -- send to error middleware
+  if (!tour) {
+    return next(new AppError('No tour found with that ID', 404));
+  }
+  
   res.status(204).json({
     status: 'success',
     data: tour,
