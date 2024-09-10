@@ -19,6 +19,13 @@ const handleDuplicateFieldsDB = (err) => {
   const message = `Duplicate field value: ${value}. Please a different value`;
 };
 
+const handleValidationErrorDB = (err) => {
+  // Looping through all the errors and getting the message
+  const errors = Object.values(err.errors).map((el) => el.message);
+  const message = `Invalid Input Data. ${errors.join('. ')}`;
+  return new AppError(message, 400);
+};
+
 const sendErrorProd = (err, res) => {
   // Operational Error that is trusted
   if (err.isOperational) {
@@ -53,6 +60,11 @@ module.exports = (err, req, res, next) => {
     // Handling duplicate fields
     if (err.code === 11000) {
       error = handleDuplicateFieldsDB(error);
+    }
+
+    // Handling Validation Errors
+    if (err.name === 'ValidationError') {
+      error = handleValidationErrorDB(error);
     }
 
     sendErrorProd(error, res);
